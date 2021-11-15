@@ -72,10 +72,19 @@ export class HuffmanKeyBuilder<T = string> {
         return this._decoderKey!;
     }
 
+    /**
+     * Returns the weight for the given character that's been calculated up to this point.
+     * 
+     * Each instance of a character increases its weight by one.
+     */
+    getWeight(value: T) { return this._counts.get(value) ?? 0; }
+
     private ensureKey() {
-        const rootNode = buildHuffmanTree(this._counts);
-        this._encoderKey = makeHuffmanEncoderKey(rootNode);
-        this._decoderKey = makeHuffmanDecoderKey(rootNode);
+        if (!this._encoderKey) {
+            const rootNode = buildHuffmanTree(this._counts);
+            this._encoderKey = makeHuffmanEncoderKey(rootNode);
+            this._decoderKey = makeHuffmanDecoderKey(rootNode);
+        }
     }
 }
 
@@ -85,7 +94,7 @@ export class HuffmanKeyBuilder<T = string> {
  * Represents the leaf node of a Huffman tree (i.e. a character and the number of times it occurs).
  * Only used when building a key, not when encoding/decoding.
  */
- export interface HuffmanTreeLeafNode<T> {
+export interface HuffmanTreeLeafNode<T> {
     type: "l"; // "leaf"
     value: T;
     weight: number; // The number of times this character appears in the source text
@@ -95,7 +104,7 @@ export class HuffmanKeyBuilder<T = string> {
  * Represents the a node of other nodes in a Huffman tree.
  * Only used when building a key, not when encoding/decoding.
  */
- export interface HuffmanTreeCombinationNode<T> {
+export interface HuffmanTreeCombinationNode<T> {
     type: "c"; // "combination";
     left: HuffmanTreeNode<T>;
     right: HuffmanTreeNode<T>;
@@ -106,7 +115,7 @@ export class HuffmanKeyBuilder<T = string> {
  * Represents a node in a Huffman tree.
  * Only used when building a key, not when encoding/decoding.
  */
- export type HuffmanTreeNode<T> = HuffmanTreeLeafNode<T> | HuffmanTreeCombinationNode<T>;
+export type HuffmanTreeNode<T> = HuffmanTreeLeafNode<T> | HuffmanTreeCombinationNode<T>;
 
 /**
  * Returns the root node of a Huffman tree based on the input array of [character, characterCount]
@@ -151,7 +160,7 @@ export function buildHuffmanTree<T>(weights: Iterable<[T, number]>): HuffmanTree
 /**
  * Builds a decoder key, which is just a tree made out of arrays.
  */
- export function makeHuffmanDecoderKey<T>(rootNode: HuffmanTreeNode<T>): HuffmanDecoderKey<T> {
+export function makeHuffmanDecoderKey<T>(rootNode: HuffmanTreeNode<T>): HuffmanDecoderKey<T> {
     if (rootNode.type == "c")
         return [makeHuffmanDecoderKey(rootNode.left), makeHuffmanDecoderKey(rootNode.right)];
     else
@@ -161,7 +170,7 @@ export function buildHuffmanTree<T>(weights: Iterable<[T, number]>): HuffmanTree
 /**
  * Builds an encoder key, which is a mapping of characters to arrays of bits (booleans).
  */
- export function makeHuffmanEncoderKey<T>(rootNode: HuffmanTreeNode<T>): HuffmanEncoderKey<T> {
+export function makeHuffmanEncoderKey<T>(rootNode: HuffmanTreeNode<T>): HuffmanEncoderKey<T> {
 
     let encodingKey = new Map<T, boolean[]>();
 
