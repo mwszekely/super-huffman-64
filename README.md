@@ -1,8 +1,10 @@
 # Super Huffman 64
 
-Allows for simple compressing/decompressing of data via Huffman encoding to a Base64*-encoded string.
+Allows for simple compressing/decompressing of data via Huffman encoding to a Base64*-encoded string. In particular, this library's key focus is **encoding arbitrary bit lengths**, even those that don't align to full bytes.
 
 This library is unlicenced into the public domain. If you find anything of worth here, please feel free to take it for yourself.
+
+\* The generated Base64 string isn't *exactly* Base64 (the final character being the giveaway) because of different padding requirements. Base64 turns 8-bit bytes into 6-bit sextets, with 0 to 2 bits leftover as padding as a result. This Base64 turns *any* number of bits into 6-bit sextets, so it may result in a full 0 to 5 bits leftover as padding. 
 
 ## Highest level
 `encodeToBase64` and `decodeToBase64` are the simplist, highest-level ways to encode/decode data. If you don't ever need to think about the Huffman tree and its nodes and such, this is all you'll need.
@@ -27,8 +29,6 @@ console.assert(toEncode == decoded);
 console.log(JSON.stringify(keyBuilder.decoder));
 // '[[[[[[",",[["D","h"],"b"]],"p"],"l"],"i"],[["r",[["q",["f",["E",["L","U"]]]],[["g","v"],["x","."]]]],["n","u"]]],[[["a","o"],["t",["c","m"]]],[" ",[["s","d"],"e"]]]]'
 ````
-
-\*The generated Base64 string here isn't *exactly* Base64 (the final character being the giveaway) because of different padding requirements. Base64 turns 8-bit bytes into 6-bit sextets, with a maximum of up to 2 bits leftover as padding as a result. This Base64 turns any number of bits into 6-bit sextets, so it may result in up to 5 bits leftover as padding. 
 
 As a result, while normal Base64 simply needs to indicate 1 bit of padding (=) or 2 bits of padding (==), this Base64 needs 5 different indicators (+=$#%).
 
