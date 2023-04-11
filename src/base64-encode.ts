@@ -9,8 +9,7 @@ import { base64EncodeMap, base64LeftoverBitsMap } from "./constants.js";
  * @param array 
  */
 export function* bitsToBase64(array: Iterable<boolean>) {
-
-
+    
     let currentSextet = 0;
     let bitsInSextetSoFar = 0;
 

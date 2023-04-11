@@ -1,13 +1,13 @@
 # Super Huffman 64
 
-Allows for simple compressing/decompressing of data via Huffman encoding to a Base64*-encoded string. In particular, this library's key focus is **encoding arbitrary bit lengths**, even those that don't align to full bytes.
+Allows for simple compressing/decompressing of data via Huffman encoding to a Base64*-encoded string, array of numbers, etc. In particular, this library's key focus is **encoding arbitrary bit lengths**, even those that don't align to full bytes.
 
 This library is unlicenced into the public domain. If you find anything of worth here, please feel free to take it for yourself.
 
 \* The generated Base64 string isn't *exactly* Base64 (the final character being the giveaway) because of different padding requirements. Base64 turns 8-bit bytes into 6-bit sextets, with 0 to 2 bits leftover as padding as a result. This Base64 turns *any* number of bits into 6-bit sextets, so it may result in a full 0 to 5 bits leftover as padding. 
 
 ## Highest level
-`encodeToBase64` and `decodeToBase64` are the simplist, highest-level ways to encode/decode data. If you don't ever need to think about the Huffman tree and its nodes and such, this is all you'll need.
+`encodeToBase64`/`decodeToBase64` and `encodeToBytes`/`encodeFromBytes` are the simplist, highest-level ways to encode/decode data. If you don't ever need to think about the Huffman tree and its nodes and such, this is all you'll need.
 
 The encoder/decoder keys needed by the two aforementioned functions can be quickly made with a `HuffmanKeyBuilder`.  A decoder key is simply a recursive array of arrays (specifically doubles of doubles), and an encoder key is a `Map` of inputs to bits (specifically `Map<string, boolean[]>`).
 

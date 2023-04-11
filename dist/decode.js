@@ -36,4 +36,33 @@ export function* decode(bits, key) {
 export function decodeFromBase64(base64, key) {
     return Array.from(decode(base64ToBits(base64), key)).join("");
 }
+function* byteToBits(byte, leftoverBits) {
+    console.assert((byte >= 0x0000 && byte < 0x0100) || (byte >= -0x80 && byte < 0x80), `Number was not within the range of a byte: ${byte < 0 ? "-" : ""}0x${Math.abs(byte).toString(16).padStart(4, "0")}`);
+    if (byte < 0) {
+        byte = byte + 0x80;
+    }
+    for (let bitIndex = 0; bitIndex < 8 - leftoverBits; ++bitIndex) {
+        yield !!(byte & (1 << bitIndex));
+    }
+}
+function* bytesToBits(bytes, leftoverBits) {
+    // Any time we get a byte, and it's the last byte, we need to truncate it by `leftoverBits` amount.
+    // But we can't know when it's the last one until we're done,
+    // so we delay sending by one iteration.
+    let nextByteToSend = null;
+    for (let byte of bytes) {
+        if (nextByteToSend != null) {
+            yield* byteToBits(nextByteToSend, 0);
+        }
+        nextByteToSend = byte;
+    }
+    // The only way this is still null is if bytes.length is 0
+    if (nextByteToSend != null) {
+        // This is the final byte, so truncate it as appropriate
+        yield* byteToBits(nextByteToSend, leftoverBits);
+    }
+}
+export function* decodeFromBytes(bytes, leftoverBits, key) {
+    return yield* decode(bytesToBits(bytes, leftoverBits), key);
+}
 //# sourceMappingURL=decode.js.map

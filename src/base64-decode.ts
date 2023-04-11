@@ -1,6 +1,5 @@
 import { base64DecodeMap, base64LeftoverBitsMap } from "./constants.js";
 
-
 /**
  * Given a pseudo-base64 string, returns a stream of the bits that originally encoded it.
  * @see bitsToBase64 for why this handles *pseudo*-base64 strings.
@@ -38,9 +37,7 @@ export function* base64ToBits(original: Iterable<string>): Generator<boolean> {
                 // This should be the last iteration of the loop, so we'll fall out and add those bits then.
             }
         }
-
     }
-
 
     if (previousSextet) {
         for (let b of previousSextet) {

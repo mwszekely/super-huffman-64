@@ -17,4 +17,5 @@ export declare function decode<T>(bits: Iterable<boolean>, key: HuffmanDecoderKe
  * if your `T` is, for example, `number`.
  */
 export declare function decodeFromBase64<T extends string>(base64: string, key: HuffmanDecoderKey<T>): string;
+export declare function decodeFromBytes<T extends string>(bytes: Iterable<number>, leftoverBits: number, key: HuffmanDecoderKey<T>): Generator<T, void, never>;
 //# sourceMappingURL=decode.d.ts.map

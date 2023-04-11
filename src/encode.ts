@@ -32,3 +32,27 @@ export function encodeToBase64<T>(string: Iterable<T>, key: HuffmanEncoderKey<T>
     return Array.from(bitsToBase64(encode(string, key))).join("");
 }
 
+/**
+ * Like `encode`, but packages up each octet of bits into a single byte.
+ * 
+ * If you need to transmit your encoded data in text (like in a JavaScript string), 
+ * use `encodeToBase64` instead. This one assumes you're writing this data to an `ArrayBuffer` or something.
+ * 
+ * The returned `leftoverBits` will always be 0, except for the last byte, where it *may* be between 1 and 7.
+ */
+export function* encodeToBytes<T>(string: Iterable<T>, key: HuffmanEncoderKey<T>): Generator<{ byte: number, leftoverBits: number }, void, never> {
+    const gen = encode(string, key);
+    let byte = 0;
+    let bitIndex = 0;
+    for (let bit of gen) {
+        byte |= (+bit << bitIndex);
+        bitIndex += 1;
+        if (bitIndex >= 8) {
+            yield { byte, leftoverBits: 0 };
+            bitIndex = 0;
+            byte = 0;
+        }
+    }
+    if (bitIndex)
+        yield { byte, leftoverBits: 8 - bitIndex };
+}

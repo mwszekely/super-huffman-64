@@ -1,6 +1,6 @@
 import { test } from "mocha"
 import { expect } from "chai"
-import { base64ToBits, HuffmanKeyBuilder, encodeToBase64, bitsToBase64, decodeFromBase64 } from "../dist/index.js";
+import { base64ToBits, HuffmanKeyBuilder, encodeToBase64, bitsToBase64, decodeFromBase64, encodeToBytes, decodeFromBytes } from "../dist/index.js";
 
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
@@ -61,5 +61,23 @@ test("Pseudo-base64 encodes and decodes properly (1 - 16 bits, 0 - 0xFFFF each t
 
         expect(binary).to.deep.equal(bits);
     }
+});
+
+test("encodeToBytes and decodeFromBytes both function as expected", () => {
+    let keyBuilder = new HuffmanKeyBuilder();
+
+    for (let c of lorem) {
+        keyBuilder.add(c);
+    }
+
+    for (let i = 0; i < 256; ++i) {
+        keyBuilder.add(String.fromCodePoint(i), 0.0001);
+    }
+
+    const input = lorem.repeat(5);
+    const bytes = Array.from(encodeToBytes(input, keyBuilder.encoder));
+    const debytes = Array.from(decodeFromBytes(bytes.map(b => b.byte), bytes.at(-1).leftoverBits || 0, keyBuilder.decoder)).join("");
+
+    expect(debytes).to.deep.equal(input);
 
 });

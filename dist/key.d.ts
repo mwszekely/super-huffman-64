@@ -2,10 +2,12 @@ import { HuffmanEncoderKey, HuffmanDecoderKey } from "./types.js";
 /**
  * Optional utility class to easily build huffman keys.
  *
+ * Create one, tell it the weights to use, and get your encoder/decoder keys.
+ *
  * ```typescript
  * const builder = new HuffmanKeyBuilder("Lorem ipsum[...]");
- * // Add a character to rare to appear in the source text:
- * builder.add("\x00", 0.001);
+ * // Manually add a rare character that wasn't in the source text:
+ * builder.add("\x00", 0);
  * const encoderKey = builder.encoder;
  * const decoderKey = builder.decoder;
  * ```
@@ -13,7 +15,8 @@ import { HuffmanEncoderKey, HuffmanDecoderKey } from "./types.js";
  * This class is really just a wrapper around the following:
  *
  * ```typescript
- * const rootNode = buildHuffmanTree([["L", 5], ["o", 9], [...]]);
+ * const mapOfWeights = new Map([["a", 5], ["b", 4], ...])
+ * const rootNode = buildHuffmanTree(mapOfWeights);
  * const encoderKey = makeHuffmanEncoderKey(rootNode);
  * const decoderKey = makeHuffmanDecoderKey(rootNode);
  * ```

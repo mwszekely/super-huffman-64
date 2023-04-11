@@ -1,14 +1,15 @@
 import FlatQueue from "flatqueue";
 import { HuffmanEncoderKey, HuffmanDecoderKey } from "./types.js";
 
-
 /**
  * Optional utility class to easily build huffman keys.
  * 
+ * Create one, tell it the weights to use, and get your encoder/decoder keys.
+ * 
  * ```typescript
  * const builder = new HuffmanKeyBuilder("Lorem ipsum[...]");
- * // Add a character to rare to appear in the source text:
- * builder.add("\x00", 0.001);
+ * // Manually add a rare character that wasn't in the source text:
+ * builder.add("\x00", 0);
  * const encoderKey = builder.encoder;
  * const decoderKey = builder.decoder;
  * ```
@@ -16,7 +17,8 @@ import { HuffmanEncoderKey, HuffmanDecoderKey } from "./types.js";
  * This class is really just a wrapper around the following:
  * 
  * ```typescript
- * const rootNode = buildHuffmanTree([["L", 5], ["o", 9], [...]]);
+ * const mapOfWeights = new Map([["a", 5], ["b", 4], ...])
+ * const rootNode = buildHuffmanTree(mapOfWeights);
  * const encoderKey = makeHuffmanEncoderKey(rootNode);
  * const decoderKey = makeHuffmanDecoderKey(rootNode);
  * ```
@@ -90,8 +92,6 @@ export class HuffmanKeyBuilder<T = string> {
     }
 }
 
-
-
 /**
  * Represents the leaf node of a Huffman tree (i.e. a character and the number of times it occurs).
  * Only used when building a key, not when encoding/decoding.
@@ -159,7 +159,6 @@ export function buildHuffmanTree<T>(weights: Iterable<[T, number]>): HuffmanTree
 
     return nodes.peek()!;
 }
-
 
 /**
  * Builds a decoder key, which is just a tree made out of arrays.

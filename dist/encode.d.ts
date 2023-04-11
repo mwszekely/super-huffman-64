@@ -16,4 +16,16 @@ export declare function encode<T>(string: Iterable<T>, key: HuffmanEncoderKey<T>
  * Runtime is `O(n)` where `n` is the length of the string.
  */
 export declare function encodeToBase64<T>(string: Iterable<T>, key: HuffmanEncoderKey<T>): string;
+/**
+ * Like `encode`, but packages up each octet of bits into a single byte.
+ *
+ * If you need to transmit your encoded data in text (like in a JavaScript string),
+ * use `encodeToBase64` instead. This one assumes you're writing this data to an `ArrayBuffer` or something.
+ *
+ * The returned `leftoverBits` will always be 0, except for the last byte, where it *may* be between 1 and 7.
+ */
+export declare function encodeToBytes<T>(string: Iterable<T>, key: HuffmanEncoderKey<T>): Generator<{
+    byte: number;
+    leftoverBits: number;
+}, void, never>;
 //# sourceMappingURL=encode.d.ts.map
