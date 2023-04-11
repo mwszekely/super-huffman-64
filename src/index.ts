@@ -1,8 +1,8 @@
 
-export { base64ToBits } from "./base64-decode";
-export { bitsToBase64 } from "./base64-encode";
-export { decode, decodeFromBase64 } from "./decode";
-export { encode, encodeToBase64 } from "./encode";
-export { HuffmanKeyBuilder } from "./key";
-export { InvalidDecoderKeyError, InvalidEncoderKeyError } from "./types";
-export type { HuffmanDecoderKey, HuffmanEncoderKey } from "./types";
+export { base64ToBits } from "./base64-decode.js";
+export { bitsToBase64 } from "./base64-encode.js";
+export { decode, decodeFromBase64 } from "./decode.js";
+export { encode, encodeToBase64 } from "./encode.js";
+export { HuffmanKeyBuilder } from "./key.js";
+export { InvalidDecoderKeyError, InvalidEncoderKeyError } from "./types.js";
+export type { HuffmanDecoderKey, HuffmanEncoderKey } from "./types.js";
