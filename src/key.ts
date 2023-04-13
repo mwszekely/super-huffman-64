@@ -1,5 +1,5 @@
 import FlatQueue from "flatqueue";
-import { HuffmanEncoderKey, HuffmanDecoderKey } from "./types.js";
+import { HuffmanEncoderKey, HuffmanDecoderKey, EmptyInputError } from "./types.js";
 
 /**
  * Optional utility class to easily build huffman keys.
@@ -157,6 +157,9 @@ export function buildHuffmanTree<T>(weights: Iterable<[T, number]>): HuffmanTree
         nodes.push(combination, weight);
     }
 
+    if (nodes.length == 0)
+        throw new EmptyInputError();
+        
     return nodes.peek()!;
 }
 
@@ -202,12 +205,8 @@ function* traverseTree<T>(node: HuffmanTreeNode<T>, currentKey: boolean[]): Gene
         newLeftKey.push(false);
         newRightKey.push(true);
 
-        let leftGen = traverseTree(node.left, newLeftKey);
-        let rightGen = traverseTree(node.right, newRightKey);
-        for (let l of leftGen)
-            yield l;
-        for (let r of rightGen)
-            yield r;
+        yield* traverseTree(node.left, newLeftKey);
+        yield* traverseTree(node.right, newRightKey);
     }
 }
 

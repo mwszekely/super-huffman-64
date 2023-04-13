@@ -1,6 +1,13 @@
-import { test } from "mocha"
-import { expect } from "chai"
-import { base64ToBits, HuffmanKeyBuilder, encodeToBase64, bitsToBase64, decodeFromBase64, encodeToBytes, decodeFromBytes } from "../dist/index.js";
+import { expect } from "chai";
+import { test } from "mocha";
+import { HuffmanKeyBuilder, base64ToBits, bitsToBase64, decodeFromBase64, decodeFromBytes, encodeToBase64, encodeToBytes } from "../dist/index.js";
+
+/**
+ * Typescript in Mocha is a bit tricky.
+ * 
+ * If anything breaks see https://github.com/mochajs/mocha-examples/issues/47, 
+ * hopefully someone's figured it out already.
+ */
 
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
@@ -46,8 +53,7 @@ test("Encoding/decoding natural language to Huffman & base64 gives the same resu
 test("Pseudo-base64 encodes and decodes properly (1 - 16 bits, 0 - 0xFFFF each time)", () => {
     for (let length = 1; length < 16; ++length) {
         const max = 2 ** length;
-        /** @type boolean[] */
-        let binary = [];
+        let binary: boolean[] = [];
 
         for (let i = 0; i < max; ++i) {
 
@@ -76,7 +82,7 @@ test("encodeToBytes and decodeFromBytes both function as expected", () => {
 
     const input = lorem.repeat(5);
     const bytes = Array.from(encodeToBytes(input, keyBuilder.encoder));
-    const debytes = Array.from(decodeFromBytes(bytes.map(b => b.byte), bytes.at(-1).leftoverBits || 0, keyBuilder.decoder)).join("");
+    const debytes = Array.from(decodeFromBytes(bytes.map(b => b.byte), (bytes.at(-1)?.leftoverBits) || 0, keyBuilder.decoder)).join("");
 
     expect(debytes).to.deep.equal(input);
 

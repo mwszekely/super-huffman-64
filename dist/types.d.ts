@@ -15,4 +15,11 @@ export declare class InvalidEncoderKeyError extends Error {
 export declare class InvalidDecoderKeyError extends Error {
     constructor();
 }
+/**
+ * An error that occurs when a key is built with no input data. It is impossible
+ * to build a key without at least one input.
+ */
+export declare class EmptyInputError extends Error {
+    constructor();
+}
 //# sourceMappingURL=types.d.ts.map

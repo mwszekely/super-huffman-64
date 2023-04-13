@@ -23,3 +23,14 @@ export class InvalidDecoderKeyError extends Error {
         this.name = "InvalidDecoderKeyError";
     }
 }
+
+/**
+ * An error that occurs when a key is built with no input data. It is impossible
+ * to build a key without at least one input.
+ */
+export class EmptyInputError extends Error {
+    constructor() {
+        super(`This key could not be built because it had no input (or an input length of 0).`);
+        this.name = "EmptyInputError";
+    }
+}
