@@ -1,31 +1,23 @@
-import { expect } from "chai";
-import { test } from "mocha";
+import { test, expect } from '@playwright/test';
 import { HuffmanKeyBuilder, base64ToBits, bitsToBase64, decodeFromBase64, decodeFromBytes, encodeToBase64, encodeToBytes } from "../dist/index.js";
-
-/**
- * Typescript in Mocha is a bit tricky.
- * 
- * If anything breaks see https://github.com/mochajs/mocha-examples/issues/47, 
- * hopefully someone's figured it out already.
- */
 
 const lorem = "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.";
 
-test("Keys reference characters they were built with", () => {
+test("Keys reference characters they were built with", async ({page}) => {
     let keyBuilder = new HuffmanKeyBuilder();
     keyBuilder.add("a");
-    expect(keyBuilder.encoder.get("a")).not.to.be.undefined;
-    expect(keyBuilder.encoder.get("b")).to.be.undefined;
-    expect(keyBuilder.decoder).to.equal("a");
+    expect(keyBuilder.encoder.get("a")).toBeInstanceOf(Array);
+    expect(keyBuilder.encoder.get("b")).toBeUndefined();
+    expect(keyBuilder.decoder).toStrictEqual("a")
 
     keyBuilder.add("b");
-    expect(keyBuilder.encoder.get("a")).not.to.be.undefined;
-    expect(keyBuilder.encoder.get("b")).not.to.be.undefined;
-    expect(keyBuilder.decoder).to.deep.equal(["a", "b"]);
+    expect(keyBuilder.encoder.get("a")).toBeInstanceOf(Array);
+    expect(keyBuilder.encoder.get("b")).toBeInstanceOf(Array);
+    expect(keyBuilder.decoder).toStrictEqual(["a", "b"]);
 
 });
 
-test("Encoding/decoding natural language to Huffman & base64 gives the same result", () => {
+test("Encoding/decoding natural language to Huffman & base64 gives the same result", async ({page, }) => {
 
     for (let stringLength = 1; stringLength < 256; stringLength *= 2) {
         let keyBuilder = new HuffmanKeyBuilder();
@@ -46,7 +38,7 @@ test("Encoding/decoding natural language to Huffman & base64 gives the same resu
         const base64 = encodeToBase64(preEncoded, keyBuilder.encoder);
         const decoded = decodeFromBase64(base64, keyBuilder.decoder);
 
-        expect(preEncoded).to.equal(decoded);
+        expect(preEncoded).toEqual(decoded);
     }
 });
 
@@ -65,7 +57,7 @@ test("Pseudo-base64 encodes and decodes properly (1 - 16 bits, 0 - 0xFFFF each t
         const base64 = Array.from(bitsToBase64(binary)).join("");
         const bits = Array.from(base64ToBits(base64));
 
-        expect(binary).to.deep.equal(bits);
+        expect(binary).toEqual(bits);
     }
 });
 
@@ -84,6 +76,6 @@ test("encodeToBytes and decodeFromBytes both function as expected", () => {
     const bytes = Array.from(encodeToBytes(input, keyBuilder.encoder));
     const debytes = Array.from(decodeFromBytes(bytes.map(b => b.byte), (bytes.at(-1)?.leftoverBits) || 0, keyBuilder.decoder)).join("");
 
-    expect(debytes).to.deep.equal(input);
+    expect(debytes).toEqual(input);
 
 });
